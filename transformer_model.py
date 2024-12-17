@@ -174,7 +174,7 @@ def negative_sample(data, bl):
     return edge_label, edge_label_index
 
 def train_model(train_data, hidden_channels=64, num_heads=8, dropout=0.6, 
-                lr=0.00001, weight_decay=5e-4, num_epochs=150, print_interval=10,bl=1):
+                lr=0.00001, weight_decay=5e-4, num_epochs=150, print_interval=10,bl=1)-> TransformerLP:
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = TransformerLP(train_data.x.size(1), train_data.x_additional.size(1), 
                           hidden_channels, num_heads, dropout).to(device)
@@ -196,7 +196,7 @@ def train_model(train_data, hidden_channels=64, num_heads=8, dropout=0.6,
         optimizer.step()
         
         # if (epoch + 1) % print_interval == 0:
-        #     val_auc, val_roc = test_model(model, val_data)
+        #     val_auc, val_roc = test_model(model, train_data)
         #     print(f"Epoch {epoch + 1:03d}, Loss: {loss.item():.4f}, "
         #         f"Validation AUPRC: {val_auc:.4f}, Validation AUROC: {val_roc:.4f}")
 
@@ -206,7 +206,7 @@ def train_model(train_data, hidden_channels=64, num_heads=8, dropout=0.6,
     return model
 #, final_val_auc, final_val_roc
 
-def test_model(model, data):
+def test_model(model, data) -> tuple:
     device = next(model.parameters()).device
     data = data.to(device)
     model.eval()
